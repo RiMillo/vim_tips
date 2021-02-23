@@ -1,0 +1,118 @@
+%! TEX root = vim_tips.tex
+
+%% vim tips and stuff.
+%%
+%% Copyright 2021 Riccardo Milani
+%%
+%% Licensed under the "THE BEER-WARE LICENSE" (Revision 42):
+%% Riccardo Milani wrote this file. As long as you retain this notice you
+%% can do whatever you want with this stuff. If we meet some day, and you think
+%% this stuff is worth it, you can buy me a beer or coffee in return
+
+
+% Authors: Riccardo Milani, X12
+
+\documentclass[a4paper,12pt,%
+              final%
+              %draft%
+              ]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+%\usepackage{lmodern}
+
+\usepackage[top=3cm, bottom=3cm, left=2cm, right=2cm]{geometry}
+
+\usepackage{xcolor}
+\definecolor{BlueX}{RGB}{0,62,92}
+\def\maincolor{BlueX}
+\definecolor{mLightBrown}{HTML}{EB811B}
+
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+
+\usepackage{titlesec} % Modify the style of the sections, chapters...
+\titleformat{\section} %command
+    %[display] %shape
+    {\color{\maincolor}\Large\bfseries\itshape} %format
+    {\color{\maincolor}\Large\bfseries\itshape\thesection~-} %label
+    {1ex} %sep
+    {} %before-code
+    %{} %after-code
+\titleformat{\subsection} %command
+    %[display] %shape
+    {\color{\maincolor}\large\bfseries} %format
+    {\color{\maincolor}\large\bfseries\thesubsection~-} %label
+    {.5ex} %sep
+    {} %before-code
+    %{} %after-code
+
+\usepackage[%
+  pdfpagelabels,
+  urlbordercolor=\maincolor,
+  linkbordercolor=mLightBrown,
+  pdfborderstyle={/S/U/W 1}
+]{hyperref}
+\newcommand*{\fullref}[1]{\hyperref[{#1}]{\autoref*{#1} - \textit{\nameref*{#1}}}}
+
+\usepackage[numbered]{bookmark}
+
+\parindent=0pt
+\setlength{\parskip}{2ex}
+
+\title{\color{\maincolor}\Huge\bfseries\scshape Random vim tips}
+\author{\vspace{-7ex}}
+\date{\vspace{-7ex}}
+\addto\captionsenglish{% Needed if babel is used. It is needed for every language that will be used.
+  \renewcommand{\abstractname}{\vspace*{-\baselineskip}}%
+}
+%
+\begin{document}
+%
+%
+\maketitle
+%
+\vspace*{-2.5cm}
+
+\pdfbookmark[1]{Abstract}{abstract}
+\begin{abstract}
+\parindent=0pt
+\setlength{\parskip}{2pt}
+\noindent
+I collect here tips\&tricks about \texttt{[g]vim}. This is not a tutorial: I won't
+teach you
+\href{https://stackoverflow.com/questions/11828270/how-do-i-exit-the-vim-editor}{how
+to exit the \texttt{vim} editor}. It's just some useful stuff that I seem not to be
+able to remember.
+
+I gathered this over the years with some Googlin' and with thousands of visits on
+StackOverflow and \href{https://vim.fandom.com/wiki/Vim_Tips_Wiki}{Vim Famdom}, to
+which you are referred if you don't find what you need here (this will very often be
+the case), and sometimes even Reddit. You may also check out
+\href{https://vimawesome.com/}{vimawesome} which provides a nice lists of useful of
+plugins.
+
+Some notation. I'll use classical stuff. \texttt{<C-a>} is control and A keys.
+\texttt{<S-a>} is shift and A keys. \texttt{<CR>} is the Carriage Return, aka Enter.
+You get the idea.
+
+So far, very few tips have been collected and there is no special structure, just
+some bullet points. Things will get better (I hope).
+
+I am no \texttt{vim}-wiz: I sure made some mistakes here and there and I won't be
+surprised if I'm selling \texttt{gvim} stuff as it were available in terminal
+\texttt{vim}, too. Do no not hesitate to hit me up for fixes or adds!
+\end{abstract}
+%
+\begin{itemize}
+  \item Open stuff under the cursor. In normal mode:
+    \begin{itemize}
+      \item \texttt{gf}: open file under cursor. \texttt{<C-w>f}: split the window
+        and open file under cursor.
+      \item \texttt{gx}: open URL / http under cursor.
+    \end{itemize}
+\end{itemize}
+%
+%
+\end{document}
