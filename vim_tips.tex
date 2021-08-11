@@ -31,6 +31,7 @@
 
 \usepackage{verbatim}
 \usepackage{fancyvrb}
+\usepackage{minted} % It supports vimscript differently than listing
 
 \usepackage{titlesec} % Modify the style of the sections, chapters...
 \titleformat{\section} %command
@@ -67,6 +68,9 @@
 \addto\captionsenglish{% Needed if babel is used. It is needed for every language that will be used.
   \renewcommand{\abstractname}{\vspace*{-\baselineskip}}%
 }
+
+\newcommand{\vim}{\texttt{vim}}
+\newcommand{\gvim}{\texttt{gvim}}
 %
 \begin{document}
 %
@@ -83,15 +87,15 @@
 I collect here tips\&tricks about \texttt{[g]vim}. This is not a tutorial: I won't
 teach you
 \href{https://stackoverflow.com/questions/11828270/how-do-i-exit-the-vim-editor}{how
-to exit the \texttt{vim} editor}. It's just some useful stuff that I seem not to be
-able to remember.
+to exit the \vim{} editor}. It's just some useful stuff that I do not seem to
+be able to remember.
 
 I gathered this over the years with some Googlin' and with thousands of visits on
 StackOverflow and \href{https://vim.fandom.com/wiki/Vim_Tips_Wiki}{Vim Famdom}, to
 which you are referred if you don't find what you need here (this will very often be
-the case), and sometimes even Reddit. You may also check out
-\href{https://vimawesome.com/}{vimawesome} which provides a nice lists of useful of
-plugins.
+the case), and sometimes even \href{https://www.reddit.com/r/vim/}{Reddit}. You may
+also check out \href{https://vimawesome.com/}{vimawesome} which provides a nice lists
+of useful of plugins.
 
 Some notation. I'll use classical stuff. \texttt{<C-a>} is control and A keys.
 \texttt{<S-a>} is shift and A keys. \texttt{<CR>} is the Carriage Return, aka Enter.
@@ -100,22 +104,177 @@ You get the idea.
 So far, very few tips have been collected and there is no special structure, just
 some bullet points. Things will get better (I hope).
 
-I am no \texttt{vim}-wiz: I sure made some mistakes here and there and I won't be
-surprised if I'm selling \texttt{gvim} stuff as it were available in terminal
-\texttt{vim}, too. Do no not hesitate to hit me up for fixes or adds!
+I am no \vim{}-wiz: I sure made some mistakes here and there and I won't be
+surprised if I'm selling \gvim{} stuff as it were available in terminal
+\texttt{vim}, too. Do not hesitate to hit me up for fixes or adds!
 \end{abstract}
 %
+\section{Generic stuff}
 \begin{itemize}
+  \item Write to and read from file
+    \begin{itemize}
+      \item Write: from manual (almost)
+\begin{minted}{vim}
+:[range]w[rite][!] [++opt]  {file}
+      Write the specified lines to {file}, unless it already exists
+      and the 'writeany' option is off. '!' overwrites
+:[range]w[rite][!] [++opt] >> {file}
+      Append the specified lines to {file}. '!' forces the write even
+      if file does not exist.
+\end{minted}
+      \item Read: from manual
+\begin{minted}{vim}
+:{range}r[ead] [++opt] [name]
+      Insert the file [name] (default: current file) below
+      the specified line.
+
+:[range]r[ead] [++opt] !{cmd}
+      Execute {cmd} and insert its standard output below
+      the cursor or the specified line. A temporary file is
+      used to store the output of the command which is then
+      read into the buffer. 'shellredir' is used to save
+      the output of the command, which can be set to include
+      stderr or not. {cmd} is executed like with ":!{cmd}",
+      any '!' is replaced with the previous command |:!|.
+\end{minted}
+    \end{itemize}
   \item Open stuff under the cursor. In normal mode:
     \begin{itemize}
       \item \texttt{gf}: open file under cursor. \texttt{<C-w>f}: split the window
         and open file under cursor.
       \item \texttt{gx}: open URL / http under cursor.
     \end{itemize}
-  \item Interesting plugins:
+  \item Manipulating filnenames and paths:
     \begin{itemize}
-      \item \href{https://github.com/puremourning/vimspector}{\texttt{vimspector}}: a debugger in \texttt{vim}.
+      \item \verb|%|: wildcard for current file;
+      \item \verb|<|: current file without extension;
+      \item \verb|%:p[:h]|: complete path of current file with [without] filename
     \end{itemize}
+  \item Variables
+    \begin{itemize}
+      \item Concatenate strings: use a dot "\texttt{.}", as in: \verb|"A B" . " C D"|
+    \end{itemize}
+  \item Edit remote file: use the \texttt{scp} protocol. For instance (notice the
+    double-slashes)
+\begin{verbatim}
+vim scp://user@domain//path/on/the/remote/machine
+\end{verbatim}
+  \item Motions
+    \begin{itemize}
+      \item \texttt{j} and \texttt{k}: up and down line-wise. \texttt{h} and
+        \texttt{l}: left and right character-wise (of course the arrows work as
+        well). Notice that it is one true line, and not wrapped-lines: in order to
+        move from one wrapped-line to another, use \texttt{gj} or \texttt{gk}.
+      \item The same reasoning applies to windows, so, for instance, \verb|<C-W>k|
+        moves you to the above window
+      \item \texttt{w} move to the beginning of the following word: notice that a
+        word is usually delimited by a space or a punctuation point (or similar). The
+        capital version, \texttt{W}, operates on block words, basically the words are
+        delimited only by spaces. \texttt{e} and \texttt{E}, same as before but at
+        the \emph{end} of the following word. \texttt{b} and \texttt{B} same as
+        before but of the \emph{previous} word.
+      \item \texttt{]]}: go the beginning of the next section / function. \texttt{[[}
+        same but previous section / function
+      \item \verb|{| or \verb|}|: up or down one paragraph (blank line)
+      \item \verb|(| or \verb|)|: up or down one sentence (dot or blank line)
+      \item \verb|%|: move to the other end of parenthesis or environment in normal / visual mode
+      \item \verb|o|: move to the other end of the selected area in visual mode
+    \end{itemize}
+  \item \href{https://vim.fandom.com/wiki/Find_in_files_within_Vim}{Grep \& vimgrep}
+\begin{verbatim}
+:[vim]grep /pattern/[g][j] file.txt
+\end{verbatim}
+    \begin{itemize}
+      \item \texttt{vim[grep]} uses a internal algorithm of \texttt{vim}.
+        \texttt{grep} uses an external program.
+      \item \texttt{g}: \emph{all} matches are shown (instead of only one per line).
+      \item \texttt{j}: do NOT jump to first match.
+      \item \texttt{[vim]grep} store the results in the \emph{quickwindow}.
+        \texttt{l[vim]grep} in the \emph{location list}.
+    \end{itemize}
+  \item Text objects: They can be used with commands like \texttt{c}, \texttt{d} or
+    \texttt{v}.
+    \begin{itemize}
+      \item \texttt{w} word, \texttt{s} sentence, \texttt{p} paragraph, \texttt{B}
+        block (such as braces for \texttt{C} language), and delimiters such as
+        parentheses \verb|)]}| or quotes \verb|"'`|
+      \item Modifiers: \texttt{i} internal or \texttt{a} whole argument. For
+        instance, \texttt{vi)} will select all the text \emph{inside} the current
+        parentheses but not characters \texttt{(} and \texttt{)}, whereas
+        \texttt{va)} will select all the text and the parentheses as well.
+    \end{itemize}
+  \item Registers: the bases \href{https://www.brianstorti.com/vim-registers/}{here}.
+    \vim{} stores stuff that you copy or delete in registers. They are accessible
+    with ``\texttt{"}'' (quotes) plus the register name. Several types of register
+    exist:
+    \begin{itemize}
+      \item Unnamed register: stores the content of the last delete-like or yank
+        command
+      \item Numbered registers, from 0 to 9: store the content of the recent
+        delete-like or yank commands in anti-chronological order. \texttt{"1} is the
+        last, \texttt{"2} second-to-last, etc\ldots \texttt{"0} is the last yank
+      \item literal registers, \texttt{a} to \texttt{z} (case insensitive): filled by
+        the users
+      \item Read-only registers:
+        \begin{itemize}
+          \item ``\texttt{.}'': last inserted text
+          \item ``\verb!%!'': name of the current file
+          \item ``\texttt{:}'': most recent executed command
+        \end{itemize}
+      \item Last-searched register, ``/''
+      \item GUI-related registers:
+        \begin{itemize}
+          \item ``*'': selected with the mouse
+          \item ``+'': clipboard
+          \item ``\verb|~|'': last drag-n-drop
+        \end{itemize}
+      \item Small-delete register, ``-'': last command that delete less than a line
+      \item Black hole register, ``\verb|_|'': discards everything
+      \item See the content of the registers with \verb|:reg[isters]|
+    \end{itemize}
+  \item Recordings or
+    \href{https://vim.fandom.com/wiki/Macros#Viewing_a_macro}{macros}:
+    \begin{itemize}
+      \item \verb|q{0-9a-zA-Z"}|: record typed characters into register
+        \verb|{0-9a-zA-Z"}| (uppercase to append). Stop recording with \verb|q|.
+      \item \verb|@{0-9a-zA-Z"}|: execute the content of register
+        \verb|{0-9a-z".=*+}|. It accepts count
+    \end{itemize}
+  \item Sort lines: \verb|:<range>sort|, see \href{https://vim.fandom.com/wiki/Sort_lines}{here}
+    \begin{itemize}
+      \item \verb|:sort!|: reverse order
+      \item \verb|:sort n|: use numeric sort
+      \item \verb|:sort u|: delete duplicated lines (mnemonic: unique)
+    \end{itemize}
+  \item File names: have a look \href{https://vim.fandom.com/wiki/Get_the_name_of_the_current_file}{here}.
+    Register \verb|%| contains the name of the current file, \verb|#| the name of alternative file.
+    Modifiers (see \verb|:he filename-modifiers|):
+    \begin{itemize}
+      \item \verb|@%| (at): directory and name of file w.r.t.~current working directory
+      \item \verb|%:t| (tail): name of file only
+      \item \verb|%:p| (path): full path
+      \item \verb|%:h| (head): path without file name
+      \item \verb|%:r| (root): name of file without extension
+      \item \verb|%:e| (extension): extension
+      \item Combinations are accepted: \verb|%:p:h|: path to the directory containing the current file
+    \end{itemize}
+  \item Regex
+    \begin{itemize}
+      \item \href{http://vimregex.com/#Non-Greedy}{Non-greedy}: \verb|\{-}| as few as possible
+      \item Not: atom \verb|\@!|, have a look \href{https://vim.fandom.com/wiki/Search_for_lines_not_containing_pattern_and_other_helpful_searches}{here}
+        \begin{itemize}
+          \item Find all \texttt{foo} not followed by \texttt{bar}: \verb|/foo\(bar\)\@!| or \verb|/\(foo\)\@<!bar|
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+%
+\section{Interesting plugins}
+\begin{itemize}
+  \item \href{https://github.com/puremourning/vimspector}{\texttt{vimspector}}: a
+    debugger in \vim{}
+  \item \href{https://github.com/chrisbra/csv.vim}{\texttt{csv}}: well, work with \texttt{csv files}
+  \item \href{https://github.com/jalvesaq/Nvim-R}{\texttt{Nvim-R}}: working with \texttt{R}
+  \item \href{https://github.com/lervag/vimtex}{\texttt{vimtex}}: working with \LaTeX{}
 \end{itemize}
 %
 %
