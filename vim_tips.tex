@@ -71,6 +71,7 @@
 
 \newcommand{\vim}{\texttt{vim}}
 \newcommand{\gvim}{\texttt{gvim}}
+\newcommand{\vimscript}{\texttt{Vimscript}}
 %
 \begin{document}
 %
@@ -137,6 +138,11 @@ surprised if I'm selling \gvim{} stuff as it were available in terminal
       stderr or not. {cmd} is executed like with ":!{cmd}",
       any '!' is replaced with the previous command |:!|.
 \end{minted}
+    \end{itemize}
+  \item Get current value of\ldots
+    \begin{itemize}
+      \item an option \verb|opt|: \verb|:set <opt>?|
+      \item a variable \verb|var|: \verb|:echo <var>| (for some native variables one should use \verb|expand()|, as in \verb|expand("%")|)
     \end{itemize}
   \item Open stuff under the cursor. In normal mode:
     \begin{itemize}
@@ -268,6 +274,23 @@ vim scp://user@domain//path/on/the/remote/machine
     \end{itemize}
 \end{itemize}
 %
+\section{\vimscript{}'ing}
+\vim{} has its own language for developing plugins and extend the editor as one wishes, it is called \vimscript{}, or, less often, \texttt{VimL}.
+\begin{itemize}
+  \item Tutorial with examples: \href{https://learnvimscriptthehardway.stevelosh.com/}{here}
+  \item Variables: some prefixes are usually added to the name of the variable and this lets you choose the scope of the variable, cf \href{https://developer.ibm.com/articles/l-vim-script-1/#values-and-variables}{here}
+    \begin{itemize}
+      \item \texttt{g:foo} global
+      \item \texttt{s:foo} local to the current script file
+      \item \texttt{w:foo} local to the current editor window
+      \item \texttt{t:foo} local to the current editor tab
+      \item \texttt{b:foo} local to the current editor buffer
+      \item \texttt{l:foo} local to the current function
+      \item \texttt{a:foo} parameter of the current function
+      \item \texttt{v:foo} one the variables that \vim{} predefines
+    \end{itemize}
+\end{itemize}
+
 \section{Interesting plugins}
 \begin{itemize}
   \item \href{https://github.com/puremourning/vimspector}{\texttt{vimspector}}: a
