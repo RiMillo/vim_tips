@@ -139,10 +139,13 @@ surprised if I'm selling \gvim{} stuff as it were available in terminal
       any '!' is replaced with the previous command |:!|.
 \end{minted}
     \end{itemize}
+  \item Buffer vs.~Tab vs.~Window: see
+    \href{https://joshldavis.com/2014/04/05/vim-tab-madness-buffers-vs-tabs/}{here}
   \item Get current value of\ldots
     \begin{itemize}
       \item an option \verb|opt|: \verb|:set <opt>?|
-      \item a variable \verb|var|: \verb|:echo <var>| (for some native variables one should use \verb|expand()|, as in \verb|expand("%")|)
+      \item a variable \verb|var|: \verb|:echo <var>| (for some native variables one
+        should use \verb|expand()|, as in \verb|expand("%")|)
     \end{itemize}
   \item Open stuff under the cursor. In normal mode:
     \begin{itemize}
@@ -198,6 +201,12 @@ vim scp://user@domain//path/on/the/remote/machine
       \item \texttt{[vim]grep} store the results in the \emph{quickwindow}.
         \texttt{l[vim]grep} in the \emph{location list}.
     \end{itemize}
+  \item Run command in several files: see
+    \href{https://vim.fandom.com/wiki/Run_a_command_in_multiple_buffers}{this post}
+    about how to use \verb|:bufdo| (apply to all buffers), \verb|:windo| (windows),
+    \verb|:tabdo| (tabs), and \verb|:argdo| (arguments). For example, see an
+    application for
+    \href{https://vim.fandom.com/wiki/Search_and_replace_in_multiple_buffers}{search\&replace}
   \item Text objects: They can be used with commands like \texttt{c}, \texttt{d} or
     \texttt{v}.
     \begin{itemize}
