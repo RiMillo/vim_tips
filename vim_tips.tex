@@ -112,6 +112,7 @@ surprised if I'm selling \gvim{} stuff as it were available in terminal
 %
 \section{Generic stuff}
 \begin{itemize}
+  \item Launch \vim{} without loading any plugin: \verb|--noplugin|
   \item Write to and read from file
     \begin{itemize}
       \item Write: from manual (almost)
@@ -141,23 +142,21 @@ surprised if I'm selling \gvim{} stuff as it were available in terminal
     \end{itemize}
   \item Buffer vs.~Tab vs.~Window: see
     \href{https://joshldavis.com/2014/04/05/vim-tab-madness-buffers-vs-tabs/}{here}
-  \item Get current value of\ldots
+  \item Get / show current value of\ldots
     \begin{itemize}
-      \item an option \verb|opt|: \verb|:set <opt>?|
+      \item an option \verb|opt|: \verb|:set <opt>?|. Moreover,
+        \verb|:verbose set <opt>?| gives info about where the option was last
+        modified
       \item a variable \verb|var|: \verb|:echo <var>| (for some native variables one
         should use \verb|expand()|, as in \verb|expand("%")|)
+      \item a mapping. Well, show every defined mappings \verb|:map|. Variants for
+        specific modes \verb!:n|v|imap!
     \end{itemize}
   \item Open stuff under the cursor. In normal mode:
     \begin{itemize}
       \item \texttt{gf}: open file under cursor. \texttt{<C-w>f}: split the window
         and open file under cursor.
       \item \texttt{gx}: open URL / http under cursor.
-    \end{itemize}
-  \item Manipulating filnenames and paths:
-    \begin{itemize}
-      \item \verb|%|: wildcard for current file;
-      \item \verb|<|: current file without extension;
-      \item \verb|%:p[:h]|: complete path of current file with [without] filename
     \end{itemize}
   \item Variables
     \begin{itemize}
@@ -168,6 +167,33 @@ surprised if I'm selling \gvim{} stuff as it were available in terminal
 \begin{verbatim}
 vim scp://user@domain//path/on/the/remote/machine
 \end{verbatim}
+  \item Format
+    \begin{itemize}
+      \item Text-width: \verb|set tw=<n>|
+      \item In visual mode:
+        \begin{itemize}
+          \item Fix format: \texttt{gq}
+          \item Fix indentation: \texttt{=}
+        \end{itemize}
+    \end{itemize}
+  \item Spell check
+    \begin{itemize}
+      \item Activate spell check: \verb|set spell|
+      \item Choose language: \verb|set spelllang=en_us|
+      \item There are two levels of wrongness: misspelled / unrecognized words (not
+        in the dictionary), and words which are correct but rare, used in other
+        ``dialects'' (e.g.~GB colour vs.~US color), or which should be capitalized.
+      \item Move: \verb|]s| go to next misspelled word, \verb|[s| previous (mnemo:
+        \emph{s}pell)
+      \item Corrections: once on a misspelled word
+        \begin{itemize}
+          \item \verb|<N>z=| opens a list of suggestions. Type the number corresponding
+            to the wished one to fix the spelling with. If \verb|N| is given, the
+            list is not shown but the \verb|N|-th word is retained
+          \item \verb|zg| adds the word to the dictionary (\verb|zw| mark as
+            incorrect; mnemo: \emph{g}ood, \emph{w}rong)
+        \end{itemize}
+    \end{itemize}
   \item Motions
     \begin{itemize}
       \item \texttt{j} and \texttt{k}: up and down line-wise. \texttt{h} and
@@ -186,7 +212,8 @@ vim scp://user@domain//path/on/the/remote/machine
         same but previous section / function
       \item \verb|{| or \verb|}|: up or down one paragraph (blank line)
       \item \verb|(| or \verb|)|: up or down one sentence (dot or blank line)
-      \item \verb|%|: move to the other end of parenthesis or environment in normal / visual mode
+      \item \verb|%|: move to the other end of parenthesis or environment in normal
+        / visual mode
       \item \verb|o|: move to the other end of the selected area in visual mode
     \end{itemize}
   \item \href{https://vim.fandom.com/wiki/Find_in_files_within_Vim}{Grep \& vimgrep}
@@ -271,14 +298,48 @@ vim scp://user@domain//path/on/the/remote/machine
       \item \verb|%:h| (head): path without file name
       \item \verb|%:r| (root): name of file without extension
       \item \verb|%:e| (extension): extension
+      \item \verb|<|: current file without extension;
       \item Combinations are accepted: \verb|%:p:h|: path to the directory containing the current file
     \end{itemize}
-  \item Regex
+  \item Regex \& replacing
     \begin{itemize}
+      \item Command:
+\begin{minted}{vim}
+:[range]s/pattern/replace/[flags]
+\end{minted}
+        \begin{itemize}
+          \item Ranges, some examples:
+            \begin{itemize}
+              \item If no range, current line
+              \item \verb|%| all the current buffer/file
+              \item \verb|.,$| from here (dot) to (comma) EoF (dollar); \verb|.,+10|
+                from here to the next 10 lines
+              \item \verb|.,'l| from here until marker \texttt{l}
+            \end{itemize}
+          \item Pattern: (more or less) usual regex syntax. \verb|\<\>| are word
+            delimiters
+          \item Replace: see also ``Grouping'' below. \verb|\U...\e|
+            (\verb|\L...\e|): UPPERCASE (lowercase) everything until \verb|\e|.
+            Similarly, \verb|\u| (\verb|\l|) UPPERCASE (lowercase) first letter only.
+            (\verb|\e| is not mandatory, but necessary if you wish to terminate the
+            action before the end)
+          \item Flags:
+            \begin{itemize}
+              \item \texttt{g} every occurrences (not only the first of the line)
+              \item \texttt{c} ask confirmation before replacing
+              \item \texttt{e} won't issue errors if pattern is not found
+              \item \texttt{I} (resp.\ \texttt{i}) case (in)sensitive
+            \end{itemize}
+        \end{itemize}
       \item \href{http://vimregex.com/#Non-Greedy}{Non-greedy}: \verb|\{-}| as few as possible
       \item Not: atom \verb|\@!|, have a look \href{https://vim.fandom.com/wiki/Search_for_lines_not_containing_pattern_and_other_helpful_searches}{here}
         \begin{itemize}
           \item Find all \texttt{foo} not followed by \texttt{bar}: \verb|/foo\(bar\)\@!| or \verb|/\(foo\)\@<!bar|
+        \end{itemize}
+      \item Grouping
+        \begin{itemize}
+          \item Escape parenthesis: \verb|\(pattern\)|
+          \item References: \verb|&| stands for all the matched pattern, \verb|\<n>| stands for the \texttt{n}-th group
         \end{itemize}
     \end{itemize}
 \end{itemize}
