@@ -140,7 +140,7 @@ surprised if I'm selling \gvim{} stuff as it were available in terminal
       any '!' is replaced with the previous command |:!|.
 \end{minted}
     \end{itemize}
-  \item Buffer vs.~Tab vs.~Window: see
+  \item Buffer vs.\ Tab vs.\ Window: see
     \href{https://joshldavis.com/2014/04/05/vim-tab-madness-buffers-vs-tabs/}{here}
   \item Get / show current value of\ldots
     \begin{itemize}
@@ -180,11 +180,25 @@ vim scp://user@domain//path/on/the/remote/machine
     \begin{itemize}
       \item Activate spell check: \verb|set spell|
       \item Choose language: \verb|set spelllang=en_us|
+      \item Dictionaries: vim checks two dictionaries, a reference one and an
+        internal one. Speaking about the internal, it is valid only for the current
+        buffer and it is not stored anywhere, so that it is lost when exiting vim
+        \begin{itemize}
+          \item \verb|zg| add the word under the cursor to the dictionary, hence tag
+            it as \emph{g}ood. \verb|zG|, same but with the internal dictionary
+          \item \verb|zw|, \verb|zW|, opposite from above, mark a word as
+            \emph{w}rong
+        \end{itemize}
       \item There are two levels of wrongness: misspelled / unrecognized words (not
         in the dictionary), and words which are correct but rare, used in other
-        ``dialects'' (e.g.~GB colour vs.~US color), or which should be capitalized.
-      \item Move: \verb|]s| go to next misspelled word, \verb|[s| previous (mnemo:
-        \emph{s}pell)
+        ``dialects'' (e.g.,\ GB colour vs.\ US color), or which should be capitalized.
+      \item Move between misspelled words:
+        \begin{itemize}
+          \item \verb|]s| go to next misspelled word, \verb|[s| previous (mnemo:
+            \emph{s}pell)
+          \item \verb|]S|, \verb|[S| (capital): as before but avoid regionalisms
+            (e.g., colour vs.\ color)
+        \end{itemize}
       \item Corrections: once on a misspelled word
         \begin{itemize}
           \item \verb|<N>z=| opens a list of suggestions. Type the number corresponding
@@ -292,7 +306,7 @@ vim scp://user@domain//path/on/the/remote/machine
     Register \verb|%| contains the name of the current file, \verb|#| the name of alternative file.
     Modifiers (see \verb|:he filename-modifiers|):
     \begin{itemize}
-      \item \verb|@%| (at): directory and name of file w.r.t.~current working directory
+      \item \verb|@%| (at): directory and name of file w.r.t.\ current working directory
       \item \verb|%:t| (tail): name of file only
       \item \verb|%:p| (path): full path
       \item \verb|%:h| (head): path without file name
